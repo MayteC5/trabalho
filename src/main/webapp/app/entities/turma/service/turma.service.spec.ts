@@ -26,7 +26,7 @@ describe('Service Tests', () => {
 
       elemDefault = {
         id: 0,
-        codigoTurma: 0,
+        codigoturma: 0,
         sala: 0,
         ano: currentDate,
       };
@@ -75,7 +75,7 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             id: 1,
-            codigoTurma: 1,
+            codigoturma: 1,
             sala: 1,
             ano: currentDate.format(DATE_TIME_FORMAT),
           },
@@ -124,7 +124,7 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             id: 1,
-            codigoTurma: 1,
+            codigoturma: 1,
             sala: 1,
             ano: currentDate.format(DATE_TIME_FORMAT),
           },

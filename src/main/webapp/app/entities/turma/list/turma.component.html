@@ -33,9 +33,10 @@
       <thead>
         <tr>
           <th scope="col"><span>ID</span></th>
-          <th scope="col"><span>Codigo Turma</span></th>
+          <th scope="col"><span>Codigoturma</span></th>
           <th scope="col"><span>Sala</span></th>
           <th scope="col"><span>Ano</span></th>
+          <th scope="col"><span>Assuntos</span></th>
           <th scope="col"><span>Aluno</span></th>
           <th scope="col"></th>
         </tr>
@@ -45,9 +46,15 @@
           <td>
             <a [routerLink]="['/turma', turma.id, 'view']">{{ turma.id }}</a>
           </td>
-          <td>{{ turma.codigoTurma }}</td>
+          <td>{{ turma.codigoturma }}</td>
           <td>{{ turma.sala }}</td>
           <td>{{ turma.ano | formatMediumDatetime }}</td>
+          <td>
+            <span *ngFor="let assuntos of turma.assuntos; let last = last">
+              <a class="form-control-static" [routerLink]="['/assunto', assuntos.id, 'view']">{{ assuntos.codigoassunto }}</a
+              >{{ last ? '' : ', ' }}
+            </span>
+          </td>
           <td>
             <div *ngIf="turma.aluno">
               <a [routerLink]="['/aluno', turma.aluno?.id, 'view']">{{ turma.aluno?.id }}</a>
