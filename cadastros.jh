@@ -1,29 +1,49 @@
 
 enum Curso{
-	ENGENHARIA DE COMPUTACAO
-    SISTEMAS DE INFORMACAO
+	ENGENHARIA
+    SISTEMAS
 }
 
 entity Aluno{ 
-	matriculaaluno Integer required
+	matricula Integer required
     cpf String
-    nome String
-    sexo String
+    nomealuno String
     email String
     cursoaluno Curso
 }
 
-
-entity Turma{
-	codigoTurma Integer required
-    sala Integer
-    ano ZonedDateTime
+entity Disciplina{
+    codigo Integer required
+    nome String
+    carga Float
 }
 
+entity Professor{
+    id Integer required
+    nomeprofessor String
+}
+
+entity DisciplinaOfertada{
+    cod Integer required
+}
 
 relationship OneToMany{
-	Aluno{turma(codigoTurma)} to Turma
+    DisciplinaOfertada{disciplina(codigo)} to Disciplina
 }
+
+relationship ManyToMany{
+	Aluno{disciplinaOfertada(cod)} to DisciplinaOfertada{aluno(matricula)}
+}
+
+relationship ManyToOne{
+    DisciplinaOfertada{professor(id)} to Professor
+}
+
+
+
+
+
+
 
 
 
