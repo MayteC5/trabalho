@@ -3,6 +3,7 @@ package br.com.trabalho.web.rest;
 import static br.com.trabalho.web.rest.TestUtil.sameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -13,14 +14,20 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,12 +37,13 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link TurmaResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class TurmaResourceIT {
 
-    private static final Integer DEFAULT_CODIGO_TURMA = 1;
-    private static final Integer UPDATED_CODIGO_TURMA = 2;
+    private static final Integer DEFAULT_CODIGOTURMA = 1;
+    private static final Integer UPDATED_CODIGOTURMA = 2;
 
     private static final Integer DEFAULT_SALA = 1;
     private static final Integer UPDATED_SALA = 2;
@@ -52,6 +60,9 @@ class TurmaResourceIT {
     @Autowired
     private TurmaRepository turmaRepository;
 
+    @Mock
+    private TurmaRepository turmaRepositoryMock;
+
     @Autowired
     private EntityManager em;
 
@@ -67,7 +78,7 @@ class TurmaResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Turma createEntity(EntityManager em) {
-        Turma turma = new Turma().codigoTurma(DEFAULT_CODIGO_TURMA).sala(DEFAULT_SALA).ano(DEFAULT_ANO);
+        Turma turma = new Turma().codigoturma(DEFAULT_CODIGOTURMA).sala(DEFAULT_SALA).ano(DEFAULT_ANO);
         return turma;
     }
 
@@ -78,7 +89,7 @@ class TurmaResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Turma createUpdatedEntity(EntityManager em) {
-        Turma turma = new Turma().codigoTurma(UPDATED_CODIGO_TURMA).sala(UPDATED_SALA).ano(UPDATED_ANO);
+        Turma turma = new Turma().codigoturma(UPDATED_CODIGOTURMA).sala(UPDATED_SALA).ano(UPDATED_ANO);
         return turma;
     }
 
@@ -100,7 +111,7 @@ class TurmaResourceIT {
         List<Turma> turmaList = turmaRepository.findAll();
         assertThat(turmaList).hasSize(databaseSizeBeforeCreate + 1);
         Turma testTurma = turmaList.get(turmaList.size() - 1);
-        assertThat(testTurma.getCodigoTurma()).isEqualTo(DEFAULT_CODIGO_TURMA);
+        assertThat(testTurma.getCodigoturma()).isEqualTo(DEFAULT_CODIGOTURMA);
         assertThat(testTurma.getSala()).isEqualTo(DEFAULT_SALA);
         assertThat(testTurma.getAno()).isEqualTo(DEFAULT_ANO);
     }
@@ -125,10 +136,10 @@ class TurmaResourceIT {
 
     @Test
     @Transactional
-    void checkCodigoTurmaIsRequired() throws Exception {
+    void checkCodigoturmaIsRequired() throws Exception {
         int databaseSizeBeforeTest = turmaRepository.findAll().size();
         // set the field null
-        turma.setCodigoTurma(null);
+        turma.setCodigoturma(null);
 
         // Create the Turma, which fails.
 
@@ -152,9 +163,27 @@ class TurmaResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(turma.getId().intValue())))
-            .andExpect(jsonPath("$.[*].codigoTurma").value(hasItem(DEFAULT_CODIGO_TURMA)))
+            .andExpect(jsonPath("$.[*].codigoturma").value(hasItem(DEFAULT_CODIGOTURMA)))
             .andExpect(jsonPath("$.[*].sala").value(hasItem(DEFAULT_SALA)))
             .andExpect(jsonPath("$.[*].ano").value(hasItem(sameInstant(DEFAULT_ANO))));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllTurmasWithEagerRelationshipsIsEnabled() throws Exception {
+        when(turmaRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restTurmaMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(turmaRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllTurmasWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(turmaRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restTurmaMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(turmaRepositoryMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test
@@ -169,7 +198,7 @@ class TurmaResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(turma.getId().intValue()))
-            .andExpect(jsonPath("$.codigoTurma").value(DEFAULT_CODIGO_TURMA))
+            .andExpect(jsonPath("$.codigoturma").value(DEFAULT_CODIGOTURMA))
             .andExpect(jsonPath("$.sala").value(DEFAULT_SALA))
             .andExpect(jsonPath("$.ano").value(sameInstant(DEFAULT_ANO)));
     }
@@ -193,7 +222,7 @@ class TurmaResourceIT {
         Turma updatedTurma = turmaRepository.findById(turma.getId()).get();
         // Disconnect from session so that the updates on updatedTurma are not directly saved in db
         em.detach(updatedTurma);
-        updatedTurma.codigoTurma(UPDATED_CODIGO_TURMA).sala(UPDATED_SALA).ano(UPDATED_ANO);
+        updatedTurma.codigoturma(UPDATED_CODIGOTURMA).sala(UPDATED_SALA).ano(UPDATED_ANO);
 
         restTurmaMockMvc
             .perform(
@@ -207,7 +236,7 @@ class TurmaResourceIT {
         List<Turma> turmaList = turmaRepository.findAll();
         assertThat(turmaList).hasSize(databaseSizeBeforeUpdate);
         Turma testTurma = turmaList.get(turmaList.size() - 1);
-        assertThat(testTurma.getCodigoTurma()).isEqualTo(UPDATED_CODIGO_TURMA);
+        assertThat(testTurma.getCodigoturma()).isEqualTo(UPDATED_CODIGOTURMA);
         assertThat(testTurma.getSala()).isEqualTo(UPDATED_SALA);
         assertThat(testTurma.getAno()).isEqualTo(UPDATED_ANO);
     }
@@ -294,7 +323,7 @@ class TurmaResourceIT {
         List<Turma> turmaList = turmaRepository.findAll();
         assertThat(turmaList).hasSize(databaseSizeBeforeUpdate);
         Turma testTurma = turmaList.get(turmaList.size() - 1);
-        assertThat(testTurma.getCodigoTurma()).isEqualTo(DEFAULT_CODIGO_TURMA);
+        assertThat(testTurma.getCodigoturma()).isEqualTo(DEFAULT_CODIGOTURMA);
         assertThat(testTurma.getSala()).isEqualTo(UPDATED_SALA);
         assertThat(testTurma.getAno()).isEqualTo(DEFAULT_ANO);
     }
@@ -311,7 +340,7 @@ class TurmaResourceIT {
         Turma partialUpdatedTurma = new Turma();
         partialUpdatedTurma.setId(turma.getId());
 
-        partialUpdatedTurma.codigoTurma(UPDATED_CODIGO_TURMA).sala(UPDATED_SALA).ano(UPDATED_ANO);
+        partialUpdatedTurma.codigoturma(UPDATED_CODIGOTURMA).sala(UPDATED_SALA).ano(UPDATED_ANO);
 
         restTurmaMockMvc
             .perform(
@@ -325,7 +354,7 @@ class TurmaResourceIT {
         List<Turma> turmaList = turmaRepository.findAll();
         assertThat(turmaList).hasSize(databaseSizeBeforeUpdate);
         Turma testTurma = turmaList.get(turmaList.size() - 1);
-        assertThat(testTurma.getCodigoTurma()).isEqualTo(UPDATED_CODIGO_TURMA);
+        assertThat(testTurma.getCodigoturma()).isEqualTo(UPDATED_CODIGOTURMA);
         assertThat(testTurma.getSala()).isEqualTo(UPDATED_SALA);
         assertThat(testTurma.getAno()).isEqualTo(UPDATED_ANO);
     }

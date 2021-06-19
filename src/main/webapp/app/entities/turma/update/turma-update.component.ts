@@ -10,6 +10,8 @@ import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 
 import { ITurma, Turma } from '../turma.model';
 import { TurmaService } from '../service/turma.service';
+import { IAssunto } from 'app/entities/assunto/assunto.model';
+import { AssuntoService } from 'app/entities/assunto/service/assunto.service';
 import { IAluno } from 'app/entities/aluno/aluno.model';
 import { AlunoService } from 'app/entities/aluno/service/aluno.service';
 
@@ -20,18 +22,21 @@ import { AlunoService } from 'app/entities/aluno/service/aluno.service';
 export class TurmaUpdateComponent implements OnInit {
   isSaving = false;
 
+  assuntosSharedCollection: IAssunto[] = [];
   alunosSharedCollection: IAluno[] = [];
 
   editForm = this.fb.group({
     id: [],
-    codigoTurma: [null, [Validators.required]],
+    codigoturma: [null, [Validators.required]],
     sala: [],
     ano: [],
+    assuntos: [],
     aluno: [],
   });
 
   constructor(
     protected turmaService: TurmaService,
+    protected assuntoService: AssuntoService,
     protected alunoService: AlunoService,
     protected activatedRoute: ActivatedRoute,
     protected fb: FormBuilder
@@ -64,8 +69,23 @@ export class TurmaUpdateComponent implements OnInit {
     }
   }
 
+  trackAssuntoById(index: number, item: IAssunto): number {
+    return item.id!;
+  }
+
   trackAlunoById(index: number, item: IAluno): number {
     return item.id!;
+  }
+
+  getSelectedAssunto(option: IAssunto, selectedVals?: IAssunto[]): IAssunto {
+    if (selectedVals) {
+      for (const selectedVal of selectedVals) {
+        if (option.id === selectedVal.id) {
+          return selectedVal;
+        }
+      }
+    }
+    return option;
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<ITurma>>): void {
@@ -90,16 +110,31 @@ export class TurmaUpdateComponent implements OnInit {
   protected updateForm(turma: ITurma): void {
     this.editForm.patchValue({
       id: turma.id,
-      codigoTurma: turma.codigoTurma,
+      codigoturma: turma.codigoturma,
       sala: turma.sala,
       ano: turma.ano ? turma.ano.format(DATE_TIME_FORMAT) : null,
+      assuntos: turma.assuntos,
       aluno: turma.aluno,
     });
 
+    this.assuntosSharedCollection = this.assuntoService.addAssuntoToCollectionIfMissing(
+      this.assuntosSharedCollection,
+      ...(turma.assuntos ?? [])
+    );
     this.alunosSharedCollection = this.alunoService.addAlunoToCollectionIfMissing(this.alunosSharedCollection, turma.aluno);
   }
 
   protected loadRelationshipsOptions(): void {
+    this.assuntoService
+      .query()
+      .pipe(map((res: HttpResponse<IAssunto[]>) => res.body ?? []))
+      .pipe(
+        map((assuntos: IAssunto[]) =>
+          this.assuntoService.addAssuntoToCollectionIfMissing(assuntos, ...(this.editForm.get('assuntos')!.value ?? []))
+        )
+      )
+      .subscribe((assuntos: IAssunto[]) => (this.assuntosSharedCollection = assuntos));
+
     this.alunoService
       .query()
       .pipe(map((res: HttpResponse<IAluno[]>) => res.body ?? []))
@@ -111,9 +146,10 @@ export class TurmaUpdateComponent implements OnInit {
     return {
       ...new Turma(),
       id: this.editForm.get(['id'])!.value,
-      codigoTurma: this.editForm.get(['codigoTurma'])!.value,
+      codigoturma: this.editForm.get(['codigoturma'])!.value,
       sala: this.editForm.get(['sala'])!.value,
       ano: this.editForm.get(['ano'])!.value ? dayjs(this.editForm.get(['ano'])!.value, DATE_TIME_FORMAT) : undefined,
+      assuntos: this.editForm.get(['assuntos'])!.value,
       aluno: this.editForm.get(['aluno'])!.value,
     };
   }
