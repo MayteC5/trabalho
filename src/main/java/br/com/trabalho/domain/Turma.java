@@ -3,6 +3,8 @@ package br.com.trabalho.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
@@ -21,14 +23,23 @@ public class Turma implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "codigo_turma", nullable = false)
-    private Integer codigoTurma;
+    @Column(name = "codigoturma", nullable = false)
+    private Integer codigoturma;
 
     @Column(name = "sala")
     private Integer sala;
 
     @Column(name = "ano")
     private ZonedDateTime ano;
+
+    @ManyToMany
+    @JoinTable(
+        name = "rel_turma__assuntos",
+        joinColumns = @JoinColumn(name = "turma_id"),
+        inverseJoinColumns = @JoinColumn(name = "assuntos_id")
+    )
+    @JsonIgnoreProperties(value = { "turmas" }, allowSetters = true)
+    private Set<Assunto> assuntos = new HashSet<>();
 
     @ManyToOne
     @JsonIgnoreProperties(value = { "turmas" }, allowSetters = true)
@@ -48,17 +59,17 @@ public class Turma implements Serializable {
         return this;
     }
 
-    public Integer getCodigoTurma() {
-        return this.codigoTurma;
+    public Integer getCodigoturma() {
+        return this.codigoturma;
     }
 
-    public Turma codigoTurma(Integer codigoTurma) {
-        this.codigoTurma = codigoTurma;
+    public Turma codigoturma(Integer codigoturma) {
+        this.codigoturma = codigoturma;
         return this;
     }
 
-    public void setCodigoTurma(Integer codigoTurma) {
-        this.codigoTurma = codigoTurma;
+    public void setCodigoturma(Integer codigoturma) {
+        this.codigoturma = codigoturma;
     }
 
     public Integer getSala() {
@@ -85,6 +96,31 @@ public class Turma implements Serializable {
 
     public void setAno(ZonedDateTime ano) {
         this.ano = ano;
+    }
+
+    public Set<Assunto> getAssuntos() {
+        return this.assuntos;
+    }
+
+    public Turma assuntos(Set<Assunto> assuntos) {
+        this.setAssuntos(assuntos);
+        return this;
+    }
+
+    public Turma addAssuntos(Assunto assunto) {
+        this.assuntos.add(assunto);
+        assunto.getTurmas().add(this);
+        return this;
+    }
+
+    public Turma removeAssuntos(Assunto assunto) {
+        this.assuntos.remove(assunto);
+        assunto.getTurmas().remove(this);
+        return this;
+    }
+
+    public void setAssuntos(Set<Assunto> assuntos) {
+        this.assuntos = assuntos;
     }
 
     public Aluno getAluno() {
@@ -124,7 +160,7 @@ public class Turma implements Serializable {
     public String toString() {
         return "Turma{" +
             "id=" + getId() +
-            ", codigoTurma=" + getCodigoTurma() +
+            ", codigoturma=" + getCodigoturma() +
             ", sala=" + getSala() +
             ", ano='" + getAno() + "'" +
             "}";

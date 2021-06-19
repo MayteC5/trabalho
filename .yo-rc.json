@@ -43,8 +43,8 @@
     "clientTheme": "none",
     "clientThemeVariant": "",
     "reactive": false,
-    "entities": ["Aluno", "Turma"],
-    "lastLiquibaseTimestamp": 1624071754000
+    "entities": ["Aluno", "Turma", "Assunto"],
+    "lastLiquibaseTimestamp": 1624075740000
   },
   "git-provider": "GitHub",
   "git-company": "MayteC5",

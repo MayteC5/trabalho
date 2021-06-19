@@ -33,7 +33,7 @@
       "relationshipType": "one-to-many",
       "otherEntityName": "turma",
       "otherEntityRelationshipName": "aluno",
-      "relationshipName": "turma",
+      "relationshipName": "turmas",
       "otherEntityField": "codigoTurma"
     }
   ],

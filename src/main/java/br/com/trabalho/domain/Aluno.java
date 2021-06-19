@@ -43,7 +43,7 @@ public class Aluno implements Serializable {
     private Curso cursoaluno;
 
     @OneToMany(mappedBy = "aluno")
-    @JsonIgnoreProperties(value = { "aluno" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "assuntos", "aluno" }, allowSetters = true)
     private Set<Turma> turmas = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -147,13 +147,13 @@ public class Aluno implements Serializable {
         return this;
     }
 
-    public Aluno addTurma(Turma turma) {
+    public Aluno addTurmas(Turma turma) {
         this.turmas.add(turma);
         turma.setAluno(this);
         return this;
     }
 
-    public Aluno removeTurma(Turma turma) {
+    public Aluno removeTurmas(Turma turma) {
         this.turmas.remove(turma);
         turma.setAluno(null);
         return this;

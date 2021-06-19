@@ -2,7 +2,7 @@
   "name": "Turma",
   "fields": [
     {
-      "fieldName": "codigoTurma",
+      "fieldName": "codigoturma",
       "fieldType": "Integer",
       "fieldValidateRules": ["required"]
     },
@@ -17,9 +17,17 @@
   ],
   "relationships": [
     {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "assunto",
+      "otherEntityRelationshipName": "turma",
+      "relationshipName": "assuntos",
+      "otherEntityField": "codigoassunto",
+      "ownerSide": true
+    },
+    {
       "relationshipType": "many-to-one",
       "otherEntityName": "aluno",
-      "otherEntityRelationshipName": "turma",
+      "otherEntityRelationshipName": "turmas",
       "relationshipName": "aluno"
     }
   ],

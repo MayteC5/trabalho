@@ -1,0 +1,43 @@
+{
+  "name": "Assunto",
+  "fields": [
+    {
+      "fieldName": "codigoassunto",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "nome",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "carga",
+      "fieldType": "Float"
+    },
+    {
+      "fieldName": "idprofessor",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "turma",
+      "otherEntityRelationshipName": "assuntos",
+      "relationshipName": "turma",
+      "otherEntityField": "codigoturma",
+      "ownerSide": false
+    }
+  ],
+  "entityTableName": "assunto",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210619040900"
+}
