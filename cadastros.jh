@@ -15,14 +15,34 @@ entity Aluno{
 
 
 entity Turma{
-	codigoTurma Integer required
+	codigoturma Integer required
     sala Integer
     ano ZonedDateTime
 }
 
+entity Professor{
+    id Integer required
+    nome String
+    cpf String
+}
+
+entity Assunto{
+    codigoassunto Integer required
+    nome String
+    carga Float
+}
+
 
 relationship OneToMany{
-	Aluno{turma(codigoTurma)} to Turma
+	Aluno{turmas(codigoTurma)} to Turma{aluno(codigoaluno)}
+}
+
+relationship OneToMany{
+   Professor{assuntos(codigoassunto)} to Assunto{professor(id)}
+}
+
+relationship ManyToMany{
+   Turma to Assunto
 }
 
 
