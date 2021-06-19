@@ -124,8 +124,8 @@ public class TurmaResource {
             .findById(turma.getId())
             .map(
                 existingTurma -> {
-                    if (turma.getCodigoTurma() != null) {
-                        existingTurma.setCodigoTurma(turma.getCodigoTurma());
+                    if (turma.getCodigoturma() != null) {
+                        existingTurma.setCodigoturma(turma.getCodigoturma());
                     }
                     if (turma.getSala() != null) {
                         existingTurma.setSala(turma.getSala());
@@ -148,12 +148,13 @@ public class TurmaResource {
     /**
      * {@code GET  /turmas} : get all the turmas.
      *
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of turmas in body.
      */
     @GetMapping("/turmas")
-    public List<Turma> getAllTurmas() {
+    public List<Turma> getAllTurmas(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get all Turmas");
-        return turmaRepository.findAll();
+        return turmaRepository.findAllWithEagerRelationships();
     }
 
     /**
@@ -165,7 +166,7 @@ public class TurmaResource {
     @GetMapping("/turmas/{id}")
     public ResponseEntity<Turma> getTurma(@PathVariable Long id) {
         log.debug("REST request to get Turma : {}", id);
-        Optional<Turma> turma = turmaRepository.findById(id);
+        Optional<Turma> turma = turmaRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(turma);
     }
 

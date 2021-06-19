@@ -12,18 +12,18 @@
         </div>
 
         <div class="form-group">
-          <label class="form-control-label" for="field_codigoTurma">Codigo Turma</label>
+          <label class="form-control-label" for="field_codigoturma">Codigoturma</label>
           <input
             type="number"
             class="form-control"
-            name="codigoTurma"
-            id="field_codigoTurma"
-            data-cy="codigoTurma"
-            formControlName="codigoTurma"
+            name="codigoturma"
+            id="field_codigoturma"
+            data-cy="codigoturma"
+            formControlName="codigoturma"
           />
-          <div *ngIf="editForm.get('codigoTurma')!.invalid && (editForm.get('codigoTurma')!.dirty || editForm.get('codigoTurma')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('codigoTurma')?.errors?.required"> This field is required. </small>
-            <small class="form-text text-danger" [hidden]="!editForm.get('codigoTurma')?.errors?.number">
+          <div *ngIf="editForm.get('codigoturma')!.invalid && (editForm.get('codigoturma')!.dirty || editForm.get('codigoturma')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('codigoturma')?.errors?.required"> This field is required. </small>
+            <small class="form-text text-danger" [hidden]="!editForm.get('codigoturma')?.errors?.number">
               This field should be a number.
             </small>
           </div>
@@ -47,6 +47,18 @@
               placeholder="YYYY-MM-DD HH:mm"
             />
           </div>
+        </div>
+
+        <div class="form-group">
+          <label for="field_assuntos">Assuntos</label>
+          <select class="form-control" id="field_assuntos" data-cy="assuntos" multiple name="assuntos" formControlName="assuntos">
+            <option
+              [ngValue]="getSelectedAssunto(assuntoOption, editForm.get('assuntos')!.value)"
+              *ngFor="let assuntoOption of assuntosSharedCollection; trackBy: trackAssuntoById"
+            >
+              {{ assuntoOption.codigoassunto }}
+            </option>
+          </select>
         </div>
 
         <div class="form-group">

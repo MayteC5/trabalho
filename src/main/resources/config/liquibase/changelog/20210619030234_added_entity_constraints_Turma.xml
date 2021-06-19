@@ -8,6 +8,18 @@
     -->
     <changeSet id="20210619030234-2" author="jhipster">
 
+        <addForeignKeyConstraint baseColumnNames="turma_id"
+                                 baseTableName="rel_turma__assuntos"
+                                 constraintName="fk_rel_turma__assuntos__turma_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="turma"/>
+
+        <addForeignKeyConstraint baseColumnNames="assuntos_id"
+                                 baseTableName="rel_turma__assuntos"
+                                 constraintName="fk_rel_turma__assuntos__assuntos_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="assunto"/>
+
         <addForeignKeyConstraint baseColumnNames="aluno_id"
                                  baseTableName="turma"
                                  constraintName="fk_turma__aluno_id"

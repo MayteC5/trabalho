@@ -14,9 +14,9 @@
         <dd>
           <span>{{ turma.id }}</span>
         </dd>
-        <dt><span>Codigo Turma</span></dt>
+        <dt><span>Codigoturma</span></dt>
         <dd>
-          <span>{{ turma.codigoTurma }}</span>
+          <span>{{ turma.codigoturma }}</span>
         </dd>
         <dt><span>Sala</span></dt>
         <dd>
@@ -25,6 +25,13 @@
         <dt><span>Ano</span></dt>
         <dd>
           <span>{{ turma.ano | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span>Assuntos</span></dt>
+        <dd>
+          <span *ngFor="let assuntos of turma.assuntos; let last = last">
+            <a [routerLink]="['/assunto', assuntos?.id, 'view']">{{ assuntos.codigoassunto }}</a
+            >{{ last ? '' : ', ' }}
+          </span>
         </dd>
         <dt><span>Aluno</span></dt>
         <dd>

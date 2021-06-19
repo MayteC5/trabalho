@@ -9,6 +9,8 @@ import { of, Subject } from 'rxjs';
 
 import { TurmaService } from '../service/turma.service';
 import { ITurma, Turma } from '../turma.model';
+import { IAssunto } from 'app/entities/assunto/assunto.model';
+import { AssuntoService } from 'app/entities/assunto/service/assunto.service';
 import { IAluno } from 'app/entities/aluno/aluno.model';
 import { AlunoService } from 'app/entities/aluno/service/aluno.service';
 
@@ -20,6 +22,7 @@ describe('Component Tests', () => {
     let fixture: ComponentFixture<TurmaUpdateComponent>;
     let activatedRoute: ActivatedRoute;
     let turmaService: TurmaService;
+    let assuntoService: AssuntoService;
     let alunoService: AlunoService;
 
     beforeEach(() => {
@@ -34,12 +37,32 @@ describe('Component Tests', () => {
       fixture = TestBed.createComponent(TurmaUpdateComponent);
       activatedRoute = TestBed.inject(ActivatedRoute);
       turmaService = TestBed.inject(TurmaService);
+      assuntoService = TestBed.inject(AssuntoService);
       alunoService = TestBed.inject(AlunoService);
 
       comp = fixture.componentInstance;
     });
 
     describe('ngOnInit', () => {
+      it('Should call Assunto query and add missing value', () => {
+        const turma: ITurma = { id: 456 };
+        const assuntos: IAssunto[] = [{ id: 14109 }];
+        turma.assuntos = assuntos;
+
+        const assuntoCollection: IAssunto[] = [{ id: 46058 }];
+        spyOn(assuntoService, 'query').and.returnValue(of(new HttpResponse({ body: assuntoCollection })));
+        const additionalAssuntos = [...assuntos];
+        const expectedCollection: IAssunto[] = [...additionalAssuntos, ...assuntoCollection];
+        spyOn(assuntoService, 'addAssuntoToCollectionIfMissing').and.returnValue(expectedCollection);
+
+        activatedRoute.data = of({ turma });
+        comp.ngOnInit();
+
+        expect(assuntoService.query).toHaveBeenCalled();
+        expect(assuntoService.addAssuntoToCollectionIfMissing).toHaveBeenCalledWith(assuntoCollection, ...additionalAssuntos);
+        expect(comp.assuntosSharedCollection).toEqual(expectedCollection);
+      });
+
       it('Should call Aluno query and add missing value', () => {
         const turma: ITurma = { id: 456 };
         const aluno: IAluno = { id: 22836 };
@@ -61,6 +84,8 @@ describe('Component Tests', () => {
 
       it('Should update editForm', () => {
         const turma: ITurma = { id: 456 };
+        const assuntos: IAssunto = { id: 28878 };
+        turma.assuntos = [assuntos];
         const aluno: IAluno = { id: 97073 };
         turma.aluno = aluno;
 
@@ -68,6 +93,7 @@ describe('Component Tests', () => {
         comp.ngOnInit();
 
         expect(comp.editForm.value).toEqual(expect.objectContaining(turma));
+        expect(comp.assuntosSharedCollection).toContain(assuntos);
         expect(comp.alunosSharedCollection).toContain(aluno);
       });
     });
@@ -137,11 +163,47 @@ describe('Component Tests', () => {
     });
 
     describe('Tracking relationships identifiers', () => {
+      describe('trackAssuntoById', () => {
+        it('Should return tracked Assunto primary key', () => {
+          const entity = { id: 123 };
+          const trackResult = comp.trackAssuntoById(0, entity);
+          expect(trackResult).toEqual(entity.id);
+        });
+      });
+
       describe('trackAlunoById', () => {
         it('Should return tracked Aluno primary key', () => {
           const entity = { id: 123 };
           const trackResult = comp.trackAlunoById(0, entity);
           expect(trackResult).toEqual(entity.id);
+        });
+      });
+    });
+
+    describe('Getting selected relationships', () => {
+      describe('getSelectedAssunto', () => {
+        it('Should return option if no Assunto is selected', () => {
+          const option = { id: 123 };
+          const result = comp.getSelectedAssunto(option);
+          expect(result === option).toEqual(true);
+        });
+
+        it('Should return selected Assunto for according option', () => {
+          const option = { id: 123 };
+          const selected = { id: 123 };
+          const selected2 = { id: 456 };
+          const result = comp.getSelectedAssunto(option, [selected2, selected]);
+          expect(result === selected).toEqual(true);
+          expect(result === selected2).toEqual(false);
+          expect(result === option).toEqual(false);
+        });
+
+        it('Should return option if this Assunto is not selected', () => {
+          const option = { id: 123 };
+          const selected = { id: 456 };
+          const result = comp.getSelectedAssunto(option, [selected]);
+          expect(result === option).toEqual(true);
+          expect(result === selected).toEqual(false);
         });
       });
     });
