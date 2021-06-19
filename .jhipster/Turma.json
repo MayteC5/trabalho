@@ -1,0 +1,36 @@
+{
+  "name": "Turma",
+  "fields": [
+    {
+      "fieldName": "codigoTurma",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "sala",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "ano",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "aluno",
+      "otherEntityRelationshipName": "turma",
+      "relationshipName": "aluno"
+    }
+  ],
+  "entityTableName": "turma",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210619030234"
+}

@@ -1,0 +1,46 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <div *ngIf="turma">
+      <h2 data-cy="turmaDetailsHeading"><span>Turma</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span>ID</span></dt>
+        <dd>
+          <span>{{ turma.id }}</span>
+        </dd>
+        <dt><span>Codigo Turma</span></dt>
+        <dd>
+          <span>{{ turma.codigoTurma }}</span>
+        </dd>
+        <dt><span>Sala</span></dt>
+        <dd>
+          <span>{{ turma.sala }}</span>
+        </dd>
+        <dt><span>Ano</span></dt>
+        <dd>
+          <span>{{ turma.ano | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span>Aluno</span></dt>
+        <dd>
+          <div *ngIf="turma.aluno">
+            <a [routerLink]="['/aluno', turma.aluno?.id, 'view']">{{ turma.aluno?.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+      </button>
+
+      <button type="button" [routerLink]="['/turma', turma.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<div class="row justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-turma-heading" data-cy="TurmaCreateUpdateHeading">Create or edit a Turma</h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="form-group" [hidden]="editForm.get('id')!.value == null">
+          <label class="form-control-label" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" for="field_codigoTurma">Codigo Turma</label>
+          <input
+            type="number"
+            class="form-control"
+            name="codigoTurma"
+            id="field_codigoTurma"
+            data-cy="codigoTurma"
+            formControlName="codigoTurma"
+          />
+          <div *ngIf="editForm.get('codigoTurma')!.invalid && (editForm.get('codigoTurma')!.dirty || editForm.get('codigoTurma')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('codigoTurma')?.errors?.required"> This field is required. </small>
+            <small class="form-text text-danger" [hidden]="!editForm.get('codigoTurma')?.errors?.number">
+              This field should be a number.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" for="field_sala">Sala</label>
+          <input type="number" class="form-control" name="sala" id="field_sala" data-cy="sala" formControlName="sala" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" for="field_ano">Ano</label>
+          <div class="d-flex">
+            <input
+              id="field_ano"
+              data-cy="ano"
+              type="datetime-local"
+              class="form-control"
+              name="ano"
+              formControlName="ano"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-control-label" for="field_aluno">Aluno</label>
+          <select class="form-control" id="field_aluno" data-cy="aluno" name="aluno" formControlName="aluno">
+            <option [ngValue]="null"></option>
+            <option
+              [ngValue]="alunoOption.id === editForm.get('aluno')!.value?.id ? editForm.get('aluno')!.value : alunoOption"
+              *ngFor="let alunoOption of alunosSharedCollection; trackBy: trackAlunoById"
+            >
+              {{ alunoOption.id }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span>Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

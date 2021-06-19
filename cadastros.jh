@@ -1,0 +1,32 @@
+
+enum Curso{
+	ENGENHARIA DE COMPUTACAO
+    SISTEMAS DE INFORMACAO
+}
+
+entity Aluno{ 
+	matriculaaluno Integer required
+    cpf String
+    nome String
+    sexo String
+    email String
+    cursoaluno Curso
+}
+
+
+entity Turma{
+	codigoTurma Integer required
+    sala Integer
+    ano ZonedDateTime
+}
+
+
+relationship OneToMany{
+	Aluno{turma(codigoTurma)} to Turma
+}
+
+
+
+
+
+
