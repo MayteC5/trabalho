@@ -42,7 +42,9 @@
     "jwtSecretKey": "Mjc3YzMyZWRiNWVmMjJlMjZlMWNhMjhkZmQ3Y2RlMWVjZmRjNTlhMDkwN2ViYTg2YzIzMTM1NTkzZTk0NWMxZDRiMGVjMWU5OGIyMWJiZjk2YmQyNTgwN2Q5NzgxMWU3ZWRhYzc1ZjI1YjU4MjZlY2VkM2IyNjEwNWNkMmVhY2M=",
     "clientTheme": "none",
     "clientThemeVariant": "",
-    "reactive": false
+    "reactive": false,
+    "entities": ["Aluno", "Turma"],
+    "lastLiquibaseTimestamp": 1624071754000
   },
   "git-provider": "GitHub",
   "git-company": "MayteC5",

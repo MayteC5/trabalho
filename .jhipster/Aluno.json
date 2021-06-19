@@ -1,0 +1,50 @@
+{
+  "name": "Aluno",
+  "fields": [
+    {
+      "fieldName": "matriculaaluno",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "cpf",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "nome",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sexo",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "cursoaluno",
+      "fieldType": "Curso",
+      "fieldValues": "ENGENHARIA,DE,COMPUTACAO,SISTEMAS,INFORMACAO"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "turma",
+      "otherEntityRelationshipName": "aluno",
+      "relationshipName": "turma",
+      "otherEntityField": "codigoTurma"
+    }
+  ],
+  "entityTableName": "aluno",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "applications": "*",
+  "changelogDate": "20210619030233"
+}
